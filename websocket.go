@@ -283,20 +283,20 @@ type Codec struct {
 }
 
 // Send sends v marshaled by cd.Marshal as single frame to ws.
-func (cd Codec) Send(ws *Conn, v interface{}) (err error) {
+func (cd Codec) Send(ws *Conn, v interface{}) (n int, err error) {
 	data, payloadType, err := cd.Marshal(v)
 	if err != nil {
-		return err
+		return 0, err
 	}
 	ws.wio.Lock()
 	defer ws.wio.Unlock()
 	w, err := ws.frameWriterFactory.NewFrameWriter(payloadType)
 	if err != nil {
-		return err
+		return 0, err
 	}
-	_, err = w.Write(data)
+	n, err = w.Write(data)
 	w.Close()
-	return err
+	return n, err
 }
 
 // Receive receives single frame from ws, unmarshaled by cd.Unmarshal and stores in v.

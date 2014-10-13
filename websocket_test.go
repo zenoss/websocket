@@ -37,7 +37,7 @@ func countServer(ws *Conn) {
 		}
 		count.N++
 		count.S = strings.Repeat(count.S, count.N)
-		err = JSON.Send(ws, count)
+		_, err = JSON.Send(ws, count)
 		if err != nil {
 			return
 		}
@@ -149,7 +149,7 @@ func TestCount(t *testing.T) {
 
 	var count Count
 	count.S = "hello"
-	if err := JSON.Send(conn, count); err != nil {
+	if _, err := JSON.Send(conn, count); err != nil {
 		t.Errorf("Write: %v", err)
 	}
 	if err := JSON.Receive(conn, &count); err != nil {
@@ -161,7 +161,7 @@ func TestCount(t *testing.T) {
 	if count.S != "hello" {
 		t.Errorf("count: expected %q got %q", "hello", count.S)
 	}
-	if err := JSON.Send(conn, count); err != nil {
+	if _, err := JSON.Send(conn, count); err != nil {
 		t.Errorf("Write: %v", err)
 	}
 	if err := JSON.Receive(conn, &count); err != nil {
